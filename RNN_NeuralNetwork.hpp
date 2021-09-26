@@ -21,16 +21,19 @@
 template<typename Neuron_t = Neuron, typename Connection_t = Connection>
 class NeuralNetwork{
   public:
-    // Builds a fully connected network with the supplied number of neurons.
-    NeuralNetwork(size_t numberOfNeurons = 0){
+    // Builds a recurrent neural network with the supplied number of input and output neurons.
+    NeuralNetwork(size_t nbOfInputs = 0, size_t nbOfOutputs = 0){
+      this->setInputs(nbOfInputs);
+      this->setOutputs(nbOfOutputs);
+      size_t numberOfNeurons = _nbOfInputs + _nbOfOutputs;
       // Creates neurons.
       for(int i = 0; i < numberOfNeurons; i++){
         this->addNeuron();
       }
       // Creates connections.
-      for(int i = 0; i < _neurons.size(); i++){
-        for(int j = 0; j < _neurons.size(); j++){
-          this->addConnection(i, j, 0.0);
+      for(int i = 0; i < _nbOfInputs; i++){
+        for(int j = 0; j < _nbOfOutputs; j++){
+          this->addConnection(i, j + _nbOfInputs, 0.0);
         }
       }
       // Adds the index of all connections.
@@ -38,6 +41,26 @@ class NeuralNetwork{
         this->addIncoming(this->getTarget(i), i);
         this->addOutgoing(this->getSource(i), i);
       }
+    }
+
+    // Sets the number of inputs of this network.
+    void setInputs(size_t nbOfInputs){
+      _nbOfInputs = nbOfInputs;
+    }
+
+    // Sets the number of outputs of this network.
+    void setOutputs(size_t nbOfOutputs){
+      _nbOfOutputs = nbOfOutputs;
+    }
+
+    // Returns the number of inputs of this network.
+    size_t getInputs(){
+      return _nbOfInputs;
+    }
+
+    // Returns the number of outputs of this network.
+    size_t getOutputs(){
+      return _nbOfOutputs;
     }
 
     // Sets the minimum weight that a connection may get due to randomization or mutation.
@@ -48,6 +71,26 @@ class NeuralNetwork{
     // Sets the maximum weight that a connection may get due to randomization or mutation.
     void setMaxWeight(double maxWeight){
       _maxWeight = maxWeight;
+    }
+
+    // Sets the weight mutation rate.
+    void setWeightMutRate(double weightMutRate){
+      _weightMutRate = weightMutRate;
+    }
+
+    // Sets the neuron mutation rate.
+    void setNeuronMutRate(double neuronMutRate){
+      _neuronMutRate = neuronMutRate;
+    }
+
+    // Sets the add neuron mutation rate.
+    void setAddNeuronMutRate(double addNeuronMutRate){
+      _addNeuronMutRate = addNeuronMutRate;
+    }
+
+    // Sets the add connection mutation rate.
+    void setAddConnectionMutRate(double addConnectionMutRate){
+      _addConnectionMutRate = addConnectionMutRate;
     }
 
     // Returns a reference to the vector of neurons of this network.
@@ -231,9 +274,19 @@ class NeuralNetwork{
     std::vector<Neuron_t> _neurons;
     std::vector<Connection_t> _connections;
 
+    // Number of inputs and outputs.
+    size_t _nbOfInputs;
+    size_t _nbOfOutputs;
+
     // Weight constraints.
     double _minWeight;
     double _maxWeight;
+
+    //Mutation rates
+    double _weightMutRate;
+    double _neuronMutRate;
+    double _addNeuronMutRate;
+    double _addConnectionMutRate;
 };
 
 // Convenience function for writing network connections to a file-stream.
