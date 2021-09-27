@@ -27,8 +27,6 @@ int main(int argc, char* argv[]) {
 
     ann_t myNetwork(atoi(argv[1]), atoi(argv[2]));
 
-    myNetwork.setInputs(NUM_INP);
-    myNetwork.setOutputs(NUM_OUT);
     myNetwork.setMinWeight(WGT_MIN);
     myNetwork.setMaxWeight(WGT_MAX);
     myNetwork.reset();
