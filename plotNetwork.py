@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-import numpy as np 
+import numpy as np
 import matplotlib.pyplot as plt
 import math
 
@@ -71,17 +71,12 @@ def readFile(filename):
       connections.append(connection)
 
    inputFile.close()
-   
+
    return neurons, connections
 
 
 def plotNetwork(nbOfInputs, nbOfOutputs, neurons, connections):
-   #fig = plt.figure()
    ax = plt.axes()
-   #ax2 = fig.add_axes([0,0,1,1])
-   #ax2.xaxis.set_visible(False)
-   #ax2.yaxis.set_visible(False)
-   
 
    nbOfHidden = len(neurons) - nbOfInputs - nbOfOutputs
    positions = [(0,0)]*len(neurons)
@@ -130,8 +125,8 @@ def plotNetwork(nbOfInputs, nbOfOutputs, neurons, connections):
 
       #Draw the bias
       circ = plt.Circle((x,y), radius=w, color=currentColor, fill=True, zorder=3)
-      ax.add_patch(circ)    
-     
+      ax.add_patch(circ)
+
       #circ = plt.Circle((x, y), radius=0.5, facecolor=[1,1,1], edgecolor=[0,0,0], fill=True, linewidth=1)
       #ax.add_patch(circ)
       #plt.plot(x, y,'ko',markerfacecolor=[1,1,1], markersize=18)
@@ -151,7 +146,7 @@ def plotNetwork(nbOfInputs, nbOfOutputs, neurons, connections):
 
       #Determine line weight based on weight
       w = int(1*abs(weight))+1
-      
+
       #If the target equals the source, draw a circle; otherwise draw an arrow
       if source == target:
          circ = plt.Circle((x1+neuronRadius, y1+neuronRadius), radius=neuronRadius, color=currentColor, fill=False, linewidth=w, zorder=1)
@@ -167,7 +162,7 @@ def plotNetwork(nbOfInputs, nbOfOutputs, neurons, connections):
          arr = plt.arrow(x1, y1, xdiff, ydiff, head_width=arrowWidth, head_length=0.3, color=currentColor, linewidth=w, zorder=1)
          ax.add_patch(arr)
 
-  
+
 
 i=0
 for arg in sys.argv[1:]:
@@ -176,7 +171,6 @@ for arg in sys.argv[1:]:
    plotNetwork(nbOfInputs, nbOfOutputs, neurons, connections)
    plt.ylim([ymin, ymax])
    plt.xlim([xmin, xmax])
-   plt.savefig(arg + ".pdf")
+   plt.savefig(arg + ".png")
    plt.clf()
    i+=1
-
