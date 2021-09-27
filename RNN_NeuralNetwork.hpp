@@ -22,7 +22,7 @@ template<typename Neuron_t = Neuron, typename Connection_t = Connection>
 class NeuralNetwork{
   public:
     // Builds a recurrent neural network with the supplied number of input and output neurons.
-    NeuralNetwork(size_t nbOfInputs = 0, size_t nbOfOutputs = 0){
+    NeuralNetwork(size_t nbOfInputs = 4, size_t nbOfOutputs = 8){
       this->setInputs(nbOfInputs);
       this->setOutputs(nbOfOutputs);
       size_t numberOfNeurons = _nbOfInputs + _nbOfOutputs;

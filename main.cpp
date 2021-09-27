@@ -14,8 +14,6 @@
 #include "RNN_NeuralNetwork.hpp"
 #include "Misc_Random.hpp"
 
-size_t NUM_INP = 4;
-size_t NUM_OUT = 8;
 double VAL_MIN = 0.0;
 double VAL_MAX = 1.0;
 double WGT_MIN = -1.0;
@@ -27,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     typedef NeuralNetwork<> ann_t;
 
-    ann_t myNetwork(NUM_INP, NUM_OUT);
+    ann_t myNetwork(atoi(argv[1]), atoi(argv[2]));
 
     myNetwork.setInputs(NUM_INP);
     myNetwork.setOutputs(NUM_OUT);

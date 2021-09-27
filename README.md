@@ -13,7 +13,11 @@ Possible activation functions:
 **Testing the Library**
 
 ```console
-g++ main.cpp
+g++ main.cpp -o RNN
+```
+
+```console
+./RNN [number_of_inputs] [number_of_outputs]
 ```
 
 **Visualizing the Neural Network**
