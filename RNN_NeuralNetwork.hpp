@@ -293,8 +293,11 @@ class NeuralNetwork{
 std::ostream& operator<<(std::ostream& is, NeuralNetwork<Neuron, Connection>& obj){
   std::vector<Neuron> neurons = obj.getNeurons();
   std::vector<Connection> connections = obj.getConnections();
+  size_t nbOfInputs = obj.getInputs();
+  size_t nbOfOutputs = obj.getOutputs();
 
-  is << neurons.size() << " ";
+  is << nbOfInputs << " ";
+  is << nbOfOutputs << " ";
   is << connections.size() << " ";
 
   // Write neurons to file.

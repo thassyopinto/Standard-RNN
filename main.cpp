@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
     myNetwork.initialize(randDouble(VAL_MIN, VAL_MAX), 0.0);
     myNetwork.randomize();
 
-    std::ofstream networkFile("standard_RNN.csv");
+    std::ofstream networkFile("std_RNN.csv");
     networkFile << myNetwork << "\n";
     networkFile.close();
 
-    myNetwork.run(50, "standard_RNN_activation.csv");
+    myNetwork.run(50, "std_RNN_activation.csv");
 
     return 0;
 }

@@ -23,9 +23,9 @@ g++ main.cpp -o RNN
 **Visualizing the Neural Network**
 
 ```console
-python plotNetwork.py standard_RNN.csv
+python plotRNN.py std_RNN.csv
 ```
 
 <p align="center">
-  <img src="standard_RNN.csv.png" />
+  <img src="std_RNN.csv.png" />
 </p>
