@@ -1,7 +1,7 @@
 /*
  * Misc_Random.hpp
  *
- * Revision: October 2018
+ * Revision: November 2018
  * Author: Thassyo Pinto - thassyo@ieee.org
  *
  * A collection of functions for creating random doubles.
