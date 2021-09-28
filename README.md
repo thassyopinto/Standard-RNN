@@ -23,13 +23,17 @@ g++ main.cpp -o RNN
 **Visualizing the Neural Network**
 
 ```console
-python plotRNN.py std_RNN.csv
+python plotRNN.py std_RNN_ini.csv
 ```
 
 - Initial RNN
 <p align="center">
   <img src="std_RNN_ini.csv.png" />
 </p>
+
+```console
+python plotRNN.py std_RNN_mut.csv
+```
 
 - Evolved RNN
 <p align="center">
