@@ -26,6 +26,12 @@ g++ main.cpp -o RNN
 python plotRNN.py std_RNN.csv
 ```
 
+- Initial RNN
 <p align="center">
-  <img src="std_RNN.csv.png" />
+  <img src="std_RNN_ini.csv.png" />
+</p>
+
+- Evolved RNN
+<p align="center">
+  <img src="std_RNN_mut.csv.png" />
 </p>

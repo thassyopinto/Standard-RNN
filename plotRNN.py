@@ -52,7 +52,7 @@ def readFile(filename):
 
     nbOfInputs = int(np.next_number())
     nbOfOutputs = int(np.next_number())
-    nbOfNeurons = nbOfInputs + nbOfOutputs
+    nbOfNeurons = int(np.next_number())
     nbOfConnections = int(np.next_number())
 
     for i in range(nbOfNeurons):

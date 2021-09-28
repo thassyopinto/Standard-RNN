@@ -9,8 +9,9 @@
 #define RNN_NEURALNETWORK_HPP_
 
 // Standard libraries
-#include <vector>
+#include <algorithm>
 #include <fstream>
+#include <vector>
 
 // Local libraries
 #include "Misc_Random.hpp"
@@ -36,10 +37,34 @@ class NeuralNetwork{
           this->addConnection(i, j + _nbOfInputs, 0.0);
         }
       }
-      // Adds the index of all connections.
-      for(int i = 0; i < _connections.size(); i++){
-        this->addIncoming(this->getTarget(i), i);
-        this->addOutgoing(this->getSource(i), i);
+    }
+
+    // Adds a neuron to this network.
+    void addNeuron(){
+      _neurons.push_back(Neuron());
+    }
+
+    // Adds a connection between the two indicated neurons.
+    void addConnection(size_t sourceIndex, size_t targetIndex, double weight = 0.0){
+      _connections.push_back(Connection(sourceIndex, targetIndex, weight));
+      this->addIncoming(targetIndex, _connections.size() - 1);
+      this->addOutgoing(sourceIndex, _connections.size() - 1);
+    }
+
+    // Removes a connection between the two indicated neurons.
+    void removeConnection(size_t connectionIndex, size_t sourceIndex, size_t targetIndex){
+      _connections.erase(_connections.begin() + connectionIndex);
+      this->updateIndices(_neurons[sourceIndex].getOutgoingIndices(), connectionIndex);
+      this->updateIndices(_neurons[targetIndex].getIncomingIndices(), connectionIndex);
+    }
+
+    // Updates the vector of connection indices after removing an existing connection.
+    void updateIndices(std::vector<size_t> vect, size_t value){
+      vect.erase(std::remove(vect.begin(), vect.end(), value), vect.end());
+      for(int i = 0; i < vect.size(); i++){
+        if(vect[i] > value){
+          vect[i] = vect[i]-1;
+        }
       }
     }
 
@@ -129,6 +154,11 @@ class NeuralNetwork{
       return _neurons[neuronIndex].getBias();
     }
 
+    // Returns the activation value of the indicated output neuron.
+    double getOutputValue(size_t neuronIndex){
+      return this->getValue(neuronIndex + _nbOfInputs);
+    }
+
     // Sets the amount of incoming potential of the indicated neuron.
     void setIncoming(size_t neuronIndex, double incoming){
       _neurons[neuronIndex].setIncoming(incoming);
@@ -188,16 +218,6 @@ class NeuralNetwork{
       return _connections[connectionIndex].getTarget();
     }
 
-    // Adds a neuron to this network.
-    void addNeuron(){
-      _neurons.push_back(Neuron());
-    }
-
-    // Adds a connection between the two indicated neurons.
-    void addConnection(size_t sourceIndex, size_t targetIndex, double weight = 0.0){
-      _connections.push_back(Connection(sourceIndex, targetIndex, weight));
-    }
-
     // Performs one update of network activation.
     void update(){
       // Resets the incoming values of neurons to 0.
@@ -227,6 +247,59 @@ class NeuralNetwork{
       // Assigns each connection, uniform randomly, a weight in [_minWeight, _maxWeight]
       for(int i = 0; i < _connections.size(); i++){
         this->setWeight(i, randDouble(_minWeight, _maxWeight));
+      }
+    }
+
+    // Mutates the neural network.
+    void mutate(){
+      // Probability of neuron-i bias to be mutated.
+      for(int i = 0; i < _neurons.size(); i++){
+        if(randDouble() <= _neuronMutRate){
+          double randBias = randGaussian();
+          if(randBias < _minWeight) this->setBias(i, _minWeight);
+          else if(randBias > _maxWeight) this->setBias(i, _maxWeight);
+          else this->setBias(i, randBias);
+        }
+      }
+      // Probability of connection-i weight to be mutated.
+      for(int i = 0; i < _connections.size(); i++){
+        if(randDouble() <= _weightMutRate){
+          double randWeight = randGaussian();
+          if(randWeight < _minWeight) this->setWeight(i, _minWeight);
+          else if(randWeight > _maxWeight) this->setWeight(i, _maxWeight);
+          else this->setWeight(i, randWeight);
+        }
+      }
+      // Probability of adding a new neuron.
+      if(randDouble() <= _addNeuronMutRate){
+        // Adds a new neuron.
+        this->addNeuron();
+        // Randomly selects an existing connection.
+        size_t randConnection = randDouble(_connections.size() - 1);
+        size_t randSource = this->getSource(randConnection);
+        size_t randTarget = this->getTarget(randConnection);
+        double randWeight = this->getWeight(randConnection);
+        // Removes random connection and update indices.
+        this->removeConnection(randConnection, randSource, randTarget);
+        // Adds connections of the new neuron.
+        addConnection(randSource, _neurons.size()-1, 1.0);
+        addConnection(_neurons.size()-1, randTarget, randWeight);
+      }
+      // Probability of adding a new connection.
+      if(randDouble() <= _addConnectionMutRate){
+        size_t nodeIndex = 0;
+        size_t newSource = randIndex(_neurons.size());
+        std::vector<size_t> nodeSet;
+        nodeSet.clear();
+        // Remove input neurons from node set.
+        for(int i = _nbOfInputs; i < _neurons.size(); i++){
+          nodeSet.push_back(i);
+        }
+        // Adds new connection to available node.
+        if(!nodeSet.empty()){
+          size_t newTarget = nodeSet[randIndex(nodeSet.size())];
+          this->addConnection(newSource, newTarget, randDouble(_minWeight, _maxWeight));
+        }
       }
     }
 
@@ -265,6 +338,7 @@ class NeuralNetwork{
       for(int i = 0; i < numberOfUpdates; i++){
         this->update();
         this->logActivation(actFile);
+        this->mutate();
       }
       actFile.close();
     }
@@ -298,6 +372,7 @@ std::ostream& operator<<(std::ostream& is, NeuralNetwork<Neuron, Connection>& ob
 
   is << nbOfInputs << " ";
   is << nbOfOutputs << " ";
+  is << neurons.size() << " ";
   is << connections.size() << " ";
 
   // Write neurons to file.

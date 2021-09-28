@@ -18,26 +18,42 @@ double VAL_MIN = 0.0;
 double VAL_MAX = 1.0;
 double WGT_MIN = -1.0;
 double WGT_MAX = 1.0;
+double MUT_WGT = 0.05;
+double MUT_BIA = 0.05;
+double MUT_ADD = 0.2;
+double NUM_RUN = 50;
 
 int main(int argc, char* argv[]) {
 
     seed();
 
-    typedef NeuralNetwork<> ann_t;
+    typedef NeuralNetwork<> rnn_t;
 
-    ann_t myNetwork(atoi(argv[1]), atoi(argv[2]));
+    rnn_t myNetwork(atoi(argv[1]), atoi(argv[2]));
 
+    // Sets up the neural network.
     myNetwork.setMinWeight(WGT_MIN);
     myNetwork.setMaxWeight(WGT_MAX);
+    myNetwork.setWeightMutRate(MUT_WGT);
+    myNetwork.setNeuronMutRate(MUT_BIA);
+    myNetwork.setAddNeuronMutRate(MUT_ADD);
+    myNetwork.setAddConnectionMutRate(MUT_ADD);
     myNetwork.reset();
     myNetwork.initialize(randDouble(VAL_MIN, VAL_MAX), 0.0);
     myNetwork.randomize();
 
-    std::ofstream networkFile("std_RNN.csv");
-    networkFile << myNetwork << "\n";
-    networkFile.close();
+    // Saves the initial neural network.
+    std::ofstream networkFileFirst("std_RNN_ini.csv");
+    networkFileFirst << myNetwork << "\n";
+    networkFileFirst.close();
 
-    myNetwork.run(50, "std_RNN_activation.csv");
+    // Runs neural network for [x] timesteps.
+    myNetwork.run(NUM_RUN, "std_RNN_activation.csv");
+
+    // Saves the mutated neural network.
+    std::ofstream networkFileLast("std_RNN_mut.csv");
+    networkFileLast << myNetwork << "\n";
+    networkFileLast.close();
 
     return 0;
 }
